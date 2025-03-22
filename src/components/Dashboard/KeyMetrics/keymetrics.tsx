@@ -19,7 +19,8 @@ const KeyMetrics = () => {
         try {
             const [partnerRes] = await Promise.all([
                 axios.get("/api/partners"),
-            ]);      
+            ]);  
+                
             const partners = partnerRes.data.data;         
             console.log("Partners data:", partners);
             

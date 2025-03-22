@@ -26,6 +26,7 @@ export async function POST(req: Request) {
 
     // Validate required fields
     if (!customer?.name || !customer?.phone || !customer?.address || !area || !items?.length || !scheduledFor || !totalAmount) {
+      console.error("❌ Missing Fields:", { customer, area, items, scheduledFor, totalAmount });
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
