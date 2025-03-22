@@ -48,7 +48,6 @@ export async function PUT(
       const partner = await DeliveryPartner.findById(order.assignedTo);
       
       if (partner) {
-        // Update partner based on new status
         if (status === "delivered") {
           partner.currentLoad = Math.max(0, partner.currentLoad - 1);
           partner.metrics.completedOrders += 1;
@@ -56,7 +55,7 @@ export async function PUT(
           partner.currentLoad = Math.max(0, partner.currentLoad - 1);
           partner.metrics.cancelledOrders += 1;
 
-          // Update assignment metrics for cancellations
+    
           await AssignmentMetrics.updateOne(
             {},
             { $inc: { "failureReasons.$[elem].count": 1 } },

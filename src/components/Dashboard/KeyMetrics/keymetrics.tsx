@@ -20,11 +20,10 @@ const KeyMetrics = () => {
             const [partnerRes] = await Promise.all([
                 axios.get("/api/partners"),
             ]);  
-                
+
             const partners = partnerRes.data.data;         
             console.log("Partners data:", partners);
-            
-            // Fix: Filter by "active" status instead of "available"
+ 
             setMetrics({
                 availablePartners: partners.filter((p: { status: string; }) => p.status === "active").length,
             });
@@ -38,11 +37,10 @@ const KeyMetrics = () => {
         fetchData();
     }, [dispatch]);
 
-    // Make sure order is defined before filtering
+
     const orders = order || [];
     console.log("Orders from Redux:", orders);
 
-    // Fix: Filter by the correct statuses from your model
     const activeOrders = orders.filter((o: { status: string; }) => 
         o.status === "pending" || o.status === "assigned" || o.status === "picked"
     ).length;

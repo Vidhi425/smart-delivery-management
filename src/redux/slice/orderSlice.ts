@@ -16,7 +16,7 @@ export interface Order {
     lng?: number;
     scheduledFor :string;
     totalAmount:string;
-    assignedTo:string;
+    assignedTo: string;
 }
 
 

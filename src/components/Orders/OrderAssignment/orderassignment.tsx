@@ -64,15 +64,14 @@ const OrderAssignment = () => {
     setError(null);
   };
 
-  const handleAssignOrder = async (automatic: boolean) => {
+  const handleAssignOrder = async () => {
     if (!selectedOrder) {
       setError("Please select an order first");
       return;
     }
 
-    // For manual assignment, a partner must be selected
-    if (!automatic && !selectedPartner) {
-      setError("Please select a partner for manual assignment");
+    if (!selectedPartner) {
+      setError("Please select a partner for assignment");
       return;
     }
 
@@ -81,11 +80,16 @@ const OrderAssignment = () => {
     setSuccess(null);
 
     try {
+        console.log("Sending request with data:", {
+            orderId: selectedOrder._id,
+            partnerId: selectedPartner
+          });
       const response = await axios.post("/api/orders/assign", {
-        orderId: selectedOrder._id, // Using _id instead of id
-        // Only include partnerId for manual assignment
-        ...(automatic ? {} : { partnerId: selectedPartner })
+        orderId: selectedOrder._id,
+        partnerId: selectedPartner
+        
       });
+     
 
       if (response.data.success) {
         setSuccess(`Order ${selectedOrder.orderNumber} assigned successfully to ${response.data.data.partner.name}`);
@@ -96,7 +100,7 @@ const OrderAssignment = () => {
         setSelectedPartner("");
       }
     } catch (err) {
-      setError( "Failed to assign order");
+      setError("Failed to assign order");
       console.error(err);
     } finally {
       setLoading(false);
@@ -115,33 +119,7 @@ const OrderAssignment = () => {
     // Check if partner serves the order area
     if (!partner.areas.includes(selectedOrder.area)) return false;
     
-    // Check if order scheduled time is within partner's shift
-    const isWithinShift = checkTimeWithinShift(
-      selectedOrder.scheduledFor, 
-      partner.shift.start, 
-      partner.shift.end
-    );
-    
-    return isWithinShift;
-  };
-
-  const checkTimeWithinShift = (scheduledTime: string, shiftStart: string, shiftEnd: string): boolean => {
-    // Convert all times to minutes for comparison
-    const timeToMinutes = (time: string) => {
-      const [hours, minutes] = time.split(':').map(Number);
-      return hours * 60 + minutes;
-    };
-    
-    const scheduledMinutes = timeToMinutes(scheduledTime);
-    const startMinutes = timeToMinutes(shiftStart);
-    const endMinutes = timeToMinutes(shiftEnd);
-    
-    // Handle overnight shifts
-    if (endMinutes < startMinutes) {
-      return scheduledMinutes >= startMinutes || scheduledMinutes <= endMinutes;
-    }
-    
-    return scheduledMinutes >= startMinutes && scheduledMinutes <= endMinutes;
+    return true;
   };
 
   return (
@@ -260,8 +238,7 @@ const OrderAssignment = () => {
                           <div className="mt-1 text-red-400 text-xs">
                             {partner.status !== "active" ? "Partner inactive" : 
                              partner.currentLoad >= 3 ? "At maximum capacity" :
-                             !partner.areas.includes(selectedOrder.area) ? "Doesn't serve this area" :
-                             "Outside shift hours"}
+                             !partner.areas.includes(selectedOrder.area) ? "Doesn't serve this area" : ""}
                           </div>
                         )}
                       </div>
@@ -272,22 +249,15 @@ const OrderAssignment = () => {
             </div>
           )}
 
-          {/* Assignment buttons */}
+          {/* Assignment button */}
           {selectedOrder && (
-            <div className="flex space-x-4">
+            <div>
               <button
-                className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all flex justify-center items-center"
-                onClick={() => handleAssignOrder(false)}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all flex justify-center items-center"
+                onClick={handleAssignOrder}
                 disabled={loading || !selectedPartner}
               >
-                {loading ? "Assigning..." : "Assign Manually"}
-              </button>
-              <button
-                className="flex-1 py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-all flex justify-center items-center"
-                onClick={() => handleAssignOrder(true)}
-                disabled={loading}
-              >
-                {loading ? "Assigning..." : "Auto-Assign"}
+                {loading ? "Assigning..." : "Assign Order"}
               </button>
             </div>
           )}

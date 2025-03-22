@@ -7,7 +7,6 @@ import { RootState, AppDispatch } from "@/redux/Store";
 import geocodeAddress from "@/lib/geocode";
 import "leaflet/dist/leaflet.css";
 
-// Dynamically import React-Leaflet components
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });

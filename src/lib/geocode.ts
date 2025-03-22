@@ -15,7 +15,7 @@ const geocodeAddress = async (area: string) => {
 
     if (response.data.length === 0) {
       console.error(`No geocode results found for: ${area}`);
-      return { lat: null, lng: null }; // Handle missing results
+      return { lat: null, lng: null };
     }
 
     const { lat, lon } = response.data[0];

@@ -16,6 +16,7 @@ const OrderCard = () => {
           dispatch(fetchOrders());
   
       },[dispatch]);
+     
 
       const[statusFilter,setStatusFilter]=useState<string | null>(null);
       const filteredOrders = statusFilter ? order.filter((o) => o.status.toLowerCase() === statusFilter) : order;
@@ -65,13 +66,7 @@ const OrderCard = () => {
             <p className="text-white font-bold">{order.customer.name}</p>
           </div>
 
-          {/* Partner */}
-          <div className="flex items-center space-x-4">
-            <Users className="text-green-400" size={20} />
-            <p className="text-gray-300 text-md font-semibold">Partner:</p>
-            <p className="text-white font-bold">{order.assignedTo}</p>
-          </div>
-
+         
           {/* Status */}
           <div className="flex items-center space-x-4">
   {order.status.toLowerCase() === "delivered" && <CheckCircle className="text-green-500" size={20} />}
